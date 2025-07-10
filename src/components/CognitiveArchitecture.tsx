@@ -44,8 +44,8 @@ const CognitiveArchitecture = () => {
   // Enhanced Forge context protocol system data
   const forgeSystem = useMemo(() => ({
     nucleus: {
-      id: 'FORGE',
-      name: 'FORGE ORCHESTRATION NUCLEUS',
+      id: 'HARMONY',
+      name: 'Harmony-v2.1',
       description: 'Universal Context Protocol Engine with Perfect Reality-to-Implementation Fidelity',
       details: [
         'Cross-Domain Intelligence Harmonization',
@@ -59,10 +59,10 @@ const CognitiveArchitecture = () => {
       position: { x: 50, y: 50 },
       role: 'Master Orchestrator & Context Guardian',
       interplay: [
-        'Coordinates all subsystem interactions',
-        'Maintains semantic coherence across domains',
-        'Distributes workload to specialized agents',
-        'Ensures zero-loss context translation'
+        'Orchestrates all subsystem interactions through semantic bridging',
+        'Maintains coherence across domains via contextual harmonization',
+        'Distributes workload through intelligent task choreography',
+        'Ensures zero-loss translation via semantic preservation protocols'
       ]
     },
     rings: {
@@ -89,9 +89,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Primary Context Interpreter',
             interplay: [
-              'Feeds parsed context to REQUIREMENT_FORGE',
-              'Validates interpretations with SEMANTIC_GUARDIAN',
-              'Coordinates with IMPLEMENTATION_WEAVER for feasibility'
+              'Synthesizes parsed context to REQUIREMENT_FORGE through semantic injection',
+              'Validates interpretations with SEMANTIC_GUARDIAN via coherence verification',
+              'Coordinates with IMPLEMENTATION_WEAVER through feasibility cross-referencing'
             ]
           },
           {
@@ -112,9 +112,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Requirements Architect',
             interplay: [
-              'Receives context from CONTEXT_ANALYZER',
-              'Collaborates with CONSTRAINT_WEAVER on limitations',
-              'Provides specs to ARCHITECTURE_GENERATOR'
+              'Receives context streams from CONTEXT_ANALYZER via semantic channeling',
+              'Collaborates with CONSTRAINT_WEAVER through limitation cross-validation',
+              'Provisions specifications to ARCHITECTURE_GENERATOR via structured blueprinting'
             ]
           },
           {
@@ -135,9 +135,9 @@ const CognitiveArchitecture = () => {
             status: 'optimizing' as const,
             role: 'Constraint Orchestrator',
             interplay: [
-              'Works with REQUIREMENT_FORGE on feasibility',
-              'Informs ARCHITECTURE_GENERATOR of limitations',
-              'Coordinates with deployment agents on resource constraints'
+              'Collaborates with REQUIREMENT_FORGE through feasibility matrix validation',
+              'Informs ARCHITECTURE_GENERATOR via constraint boundary mapping',
+              'Coordinates with deployment agents through resource allocation synchronization'
             ]
           },
           {
@@ -158,9 +158,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'System Architect',
             interplay: [
-              'Receives requirements from REQUIREMENT_FORGE',
-              'Considers constraints from CONSTRAINT_WEAVER',
-              'Provides blueprints to IMPLEMENTATION_WEAVER'
+              'Receives requirements from REQUIREMENT_FORGE via structured specification intake',
+              'Considers constraints from CONSTRAINT_WEAVER through limitation integration',
+              'Provisions blueprints to IMPLEMENTATION_WEAVER via architectural transmission'
             ]
           },
           {
@@ -181,9 +181,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Implementation Coordinator',
             interplay: [
-              'Executes plans from ARCHITECTURE_GENERATOR',
-              'Coordinates with Forge Agents for specialized tasks',
-              'Reports progress to DEPLOYMENT_ORCHESTRATOR'
+              'Executes plans from ARCHITECTURE_GENERATOR through blueprint materialization',
+              'Coordinates with Forge Agents via specialized task delegation',
+              'Reports progress to DEPLOYMENT_ORCHESTRATOR through status synchronization'
             ]
           },
           {
@@ -204,9 +204,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Production Guardian',
             interplay: [
-              'Receives deployment plans from IMPLEMENTATION_WEAVER',
-              'Coordinates with infrastructure agents',
-              'Monitors system health and reports to FORGE nucleus'
+              'Receives deployment plans from IMPLEMENTATION_WEAVER via execution handoff',
+              'Coordinates with infrastructure agents through provisioning orchestration',
+              'Monitors system health and reports to Harmony nucleus via telemetry streaming'
             ]
           }
         ]
@@ -234,9 +234,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Integration Specialist',
             interplay: [
-              'Manages external system connections',
-              'Reports integration status to core systems',
-              'Coordinates with other agents for complex integrations'
+              'Manages external system connections through protocol harmonization',
+              'Reports integration status to core systems via health telemetry broadcasting',
+              'Coordinates with other agents through cross-platform synchronization'
             ]
           },
           {
@@ -257,9 +257,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Conversation Interface Manager',
             interplay: [
-              'Interfaces with users through voice channels',
-              'Translates voice commands to system actions',
-              'Collaborates with CONTEXT_ANALYZER for intent understanding'
+              'Interfaces with users through voice channel orchestration',
+              'Translates voice commands to system actions via intent materialization',
+              'Collaborates with CONTEXT_ANALYZER through understanding amplification'
             ]
           },
           {
@@ -280,9 +280,9 @@ const CognitiveArchitecture = () => {
             status: 'optimizing' as const,
             role: 'Protocol Harmonizer',
             interplay: [
-              'Analyzes communication patterns between systems',
-              'Optimizes data flow protocols',
-              'Ensures interoperability across platforms'
+              'Analyzes communication patterns between systems via protocol introspection',
+              'Optimizes data flow protocols through efficiency amplification',
+              'Ensures interoperability across platforms via compatibility orchestration'
             ]
           }
         ]
@@ -310,9 +310,9 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Advanced Context Processor',
             interplay: [
-              'Handles complex multi-dimensional contexts',
-              'Supports core systems with advanced analytics',
-              'Provides predictive insights to FORGE nucleus'
+              'Handles complex multi-dimensional contexts through quantum state orchestration',
+              'Supports core systems with advanced analytics via predictive intelligence injection',
+              'Provides predictive insights to Harmony nucleus through foresight streaming'
             ]
           }
         ]
@@ -479,7 +479,7 @@ const CognitiveArchitecture = () => {
           <div className="text-center">
             <Brain size={36} className="mx-auto mb-2" />
             <div className="text-xs font-bold leading-tight">
-              FORGE<br/>ORCHESTRATION<br/>NUCLEUS
+              Harmony-v2.1
             </div>
           </div>
 
