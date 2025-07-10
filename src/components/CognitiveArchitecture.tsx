@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Search, Zap, Brain, Target, Settings, Database, Shield, Lightbulb, X, Play, Pause, ChevronLeft, ChevronRight, Network } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { Search, Zap, Brain, Target, Settings, Database, Shield, Lightbulb, X, Play, Pause, ChevronLeft, ChevronRight, Network, Activity, Wifi, WifiOff } from 'lucide-react';
 
 interface ComponentData {
   id: string;
@@ -40,6 +40,185 @@ const CognitiveArchitecture = () => {
   const [isAnimating, setIsAnimating] = useState(true);
   const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'performance'>('overview');
   const [configPanelOpen, setConfigPanelOpen] = useState(true);
+  
+  // Dynamic Claude Code Hooks & MCP Integration
+  const [isConnected, setIsConnected] = useState(false);
+  const [realTimeData, setRealTimeData] = useState<{[key: string]: any}>({});
+  const [mcpStatus, setMcpStatus] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected');
+  const [streamingUpdates, setStreamingUpdates] = useState<string[]>([]);
+  const wsRef = useRef<WebSocket | null>(null);
+  const mcpClientRef = useRef<any>(null);
+
+  // Initialize Claude Code Hooks and MCP Connection
+  useEffect(() => {
+    const initializeClaudeHooks = async () => {
+      try {
+        setMcpStatus('connecting');
+        
+        // Simulate Claude Code Hooks initialization
+        const claudeHooks = {
+          model: 'claude-4.1-2025-04-14',
+          contextProtocol: 'MCP-v1.2',
+          capabilities: ['streaming', 'tool-use', 'real-time-updates'],
+          hooks: {
+            onMessage: (data: any) => updateRealTimeData(data),
+            onError: (error: any) => console.error('Claude Hook Error:', error),
+            onTokenUpdate: (tokens: any) => updateTokenMetrics(tokens),
+            onContextChange: (context: any) => updateContext(context)
+          }
+        };
+
+        // Initialize WebSocket for real-time updates
+        const ws = new WebSocket('wss://api.lovable.dev/cognitive-stream');
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+          setIsConnected(true);
+          setMcpStatus('connected');
+          console.log('Claude Code Hooks: Connected');
+        };
+
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          handleRealTimeUpdate(data);
+        };
+
+        ws.onclose = () => {
+          setIsConnected(false);
+          setMcpStatus('disconnected');
+        };
+
+        // Initialize MCP Client
+        initializeMCPClient();
+
+      } catch (error) {
+        console.error('Failed to initialize Claude Hooks:', error);
+        setMcpStatus('disconnected');
+      }
+    };
+
+    initializeClaudeHooks();
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, []);
+
+  const initializeMCPClient = useCallback(async () => {
+    try {
+      // Simulate MCP Client initialization with TypeScript SDK
+      mcpClientRef.current = {
+        servers: [],
+        connect: async (serverUri: string) => {
+          console.log(`Connecting to MCP Server: ${serverUri}`);
+          return { status: 'connected', capabilities: ['tools', 'resources', 'prompts'] };
+        },
+        listTools: async () => {
+          return [
+            { name: 'cognitive_analyzer', description: 'Analyzes cognitive patterns' },
+            { name: 'performance_monitor', description: 'Monitors system performance' },
+            { name: 'integration_manager', description: 'Manages platform integrations' }
+          ];
+        },
+        callTool: async (name: string, args: any) => {
+          return simulateToolCall(name, args);
+        }
+      };
+    } catch (error) {
+      console.error('MCP Client initialization failed:', error);
+    }
+  }, []);
+
+  const handleRealTimeUpdate = useCallback((data: any) => {
+    setRealTimeData(prev => ({
+      ...prev,
+      [data.componentId]: {
+        ...prev[data.componentId],
+        ...data.updates,
+        lastUpdated: Date.now()
+      }
+    }));
+
+    if (data.type === 'performance_update') {
+      updateComponentPerformance(data.componentId, data.performance);
+    }
+
+    if (data.type === 'status_change') {
+      updateComponentStatus(data.componentId, data.status);
+    }
+
+    setStreamingUpdates(prev => [
+      `${new Date().toLocaleTimeString()}: ${data.message || 'System update received'}`,
+      ...prev.slice(0, 9)
+    ]);
+  }, []);
+
+  const updateRealTimeData = useCallback((data: any) => {
+    // Process Claude streaming response data
+    if (data.type === 'cognitive_analysis') {
+      setRealTimeData(prev => ({
+        ...prev,
+        cognitive: data.analysis
+      }));
+    }
+  }, []);
+
+  const updateTokenMetrics = useCallback((tokens: any) => {
+    setRealTimeData(prev => ({
+      ...prev,
+      tokens: {
+        input: tokens.input_tokens,
+        output: tokens.output_tokens,
+        total: tokens.input_tokens + tokens.output_tokens
+      }
+    }));
+  }, []);
+
+  const updateContext = useCallback((context: any) => {
+    setRealTimeData(prev => ({
+      ...prev,
+      context: context
+    }));
+  }, []);
+
+  const simulateToolCall = useCallback(async (toolName: string, args: any) => {
+    // Simulate MCP tool execution
+    const mockResults = {
+      cognitive_analyzer: {
+        insights: ['Pattern recognition improved by 15%', 'New edge case discovered'],
+        performance: Math.random() * 100,
+        recommendations: ['Optimize neural pathways', 'Enhance learning algorithms']
+      },
+      performance_monitor: {
+        metrics: {
+          cpu: Math.random() * 100,
+          memory: Math.random() * 100,
+          network: Math.random() * 100
+        },
+        alerts: [],
+        status: 'optimal'
+      },
+      integration_manager: {
+        connections: ['GHL API', 'Assistable Voice', 'Database'],
+        health: 'excellent',
+        latency: Math.random() * 50
+      }
+    };
+
+    return mockResults[toolName as keyof typeof mockResults] || { status: 'executed' };
+  }, []);
+
+  const updateComponentPerformance = useCallback((componentId: string, performance: number) => {
+    // This would update the actual component performance in a real implementation
+    console.log(`Performance update for ${componentId}: ${performance}%`);
+  }, []);
+
+  const updateComponentStatus = useCallback((componentId: string, status: string) => {
+    // This would update the actual component status in a real implementation
+    console.log(`Status update for ${componentId}: ${status}`);
+  }, []);
 
   // Enhanced Forge context protocol system data with complete story integration
   const forgeSystem = useMemo(() => ({
@@ -527,6 +706,33 @@ const CognitiveArchitecture = () => {
     }
   }), []);
 
+  // Simulate real-time data updates
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const interval = setInterval(() => {
+      // Simulate random component updates
+      const components = Object.values(forgeSystem.rings).flatMap(ring => ring.components);
+      const randomComponent = components[Math.floor(Math.random() * components.length)];
+      
+      const mockUpdate = {
+        componentId: randomComponent.id,
+        type: 'performance_update',
+        performance: Math.floor(Math.random() * 20) + 80, // 80-100%
+        message: `${randomComponent.name} optimization cycle complete`,
+        updates: {
+          efficiency: Math.floor(Math.random() * 10) + 90,
+          throughput: Math.floor(Math.random() * 1000) + 500,
+          errorRate: Math.random() * 0.1
+        }
+      };
+
+      handleRealTimeUpdate(mockUpdate);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isConnected, handleRealTimeUpdate, forgeSystem.rings]);
+
   const getComponentIcon = useCallback((id: string) => {
     if (id.startsWith('CFA')) return Brain;
     if (id.startsWith('FA')) return Settings;
@@ -997,6 +1203,71 @@ const CognitiveArchitecture = () => {
         ))
       ))}
       
+      {/* Real-time Claude Code Hooks & MCP Status */}
+      <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
+        {/* Connection Status */}
+        <div className={`px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300 ${
+          isConnected 
+            ? 'bg-green-500/20 border-green-400/50 text-green-100' 
+            : 'bg-red-500/20 border-red-400/50 text-red-100'
+        }`}>
+          <div className="flex items-center gap-2 text-sm">
+            {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+            <span>Claude Hooks: {isConnected ? 'Connected' : 'Disconnected'}</span>
+          </div>
+        </div>
+
+        {/* MCP Status */}
+        <div className={`px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300 ${
+          mcpStatus === 'connected' 
+            ? 'bg-blue-500/20 border-blue-400/50 text-blue-100'
+            : mcpStatus === 'connecting'
+            ? 'bg-yellow-500/20 border-yellow-400/50 text-yellow-100'
+            : 'bg-gray-500/20 border-gray-400/50 text-gray-100'
+        }`}>
+          <div className="flex items-center gap-2 text-sm">
+            <Network className="w-4 h-4" />
+            <span>MCP: {mcpStatus}</span>
+          </div>
+        </div>
+
+        {/* Real-time Metrics */}
+        {isConnected && (
+          <div className="px-3 py-2 rounded-lg backdrop-blur-md bg-black/40 border border-white/20">
+            <div className="flex items-center gap-2 text-sm text-white mb-2">
+              <Activity className="w-4 h-4" />
+              <span>Live Metrics</span>
+            </div>
+            <div className="space-y-1 text-xs text-gray-300">
+              {realTimeData.tokens && (
+                <div>Tokens: {realTimeData.tokens.total?.toLocaleString()}</div>
+              )}
+              {realTimeData.cognitive && (
+                <div>Analysis: {realTimeData.cognitive.status}</div>
+              )}
+              <div>Updates: {streamingUpdates.length}</div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Streaming Updates Feed */}
+      {isConnected && streamingUpdates.length > 0 && (
+        <div className="absolute bottom-4 right-4 w-80 max-h-64 overflow-y-auto backdrop-blur-md bg-black/40 border border-white/20 rounded-lg p-3 z-40">
+          <div className="flex items-center gap-2 text-sm text-white mb-2">
+            <Activity className="w-4 h-4 animate-pulse" />
+            <span>Real-Time Updates</span>
+          </div>
+          <div className="space-y-1">
+            {streamingUpdates.map((update, index) => (
+              <div key={index} className="text-xs text-gray-300 opacity-90 border-l-2 border-blue-500/50 pl-2">
+                {update}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Control panels */}
       <ModernControlPanel />
       <EnhancedDetailPanel />
