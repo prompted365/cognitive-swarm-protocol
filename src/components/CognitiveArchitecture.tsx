@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Search, Zap, Brain, Target, Settings, Database, Shield, Lightbulb, X, Play, Pause, RotateCcw } from 'lucide-react';
+import { Search, Zap, Brain, Target, Settings, Database, Shield, Lightbulb, X, Play, Pause, ChevronLeft, ChevronRight, Network } from 'lucide-react';
 
 interface ComponentData {
   id: string;
@@ -12,6 +11,8 @@ interface ComponentData {
   angle: number;
   performance?: number;
   status?: 'active' | 'optimizing' | 'idle';
+  role?: string;
+  interplay?: string[];
 }
 
 interface RingData {
@@ -28,6 +29,8 @@ interface NucleusData {
   details: string[];
   color: string;
   position: { x: number; y: number };
+  role?: string;
+  interplay?: string[];
 }
 
 const CognitiveArchitecture = () => {
@@ -36,51 +39,64 @@ const CognitiveArchitecture = () => {
   const [activeRing, setActiveRing] = useState('all');
   const [isAnimating, setIsAnimating] = useState(true);
   const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'performance'>('overview');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [configPanelOpen, setConfigPanelOpen] = useState(true);
 
-  // Enhanced cognitive system data
-  const cognitiveSystem = useMemo(() => ({
+  // Enhanced Forge context protocol system data
+  const forgeSystem = useMemo(() => ({
     nucleus: {
-      id: 'SCON',
-      name: 'SUPREME COGNITIVE ORCHESTRATION NUCLEUS',
-      description: 'Zero-Shot Cognitive Traversal Engine with Perfect Vision-to-Implementation Fidelity',
+      id: 'FORGE',
+      name: 'FORGE ORCHESTRATION NUCLEUS',
+      description: 'Universal Context Protocol Engine with Perfect Reality-to-Implementation Fidelity',
       details: [
-        'Cross-System Intelligence Harmonization',
+        'Cross-Domain Intelligence Harmonization',
         'Real-Time Strategic Optimization',
         'Bidirectional Neural Pathway Management',
-        'Semantic Coherence Maintenance',
-        'Performance: 100% Vision-to-Code Fidelity',
-        'Response Time: <5 seconds for all operations'
+        'Context Coherence Maintenance',
+        'Performance: 100% Reality-to-Code Fidelity',
+        'Response Time: <3 seconds for all operations'
       ],
       color: '#fbbf24',
-      position: { x: 50, y: 50 }
+      position: { x: 50, y: 50 },
+      role: 'Master Orchestrator & Context Guardian',
+      interplay: [
+        'Coordinates all subsystem interactions',
+        'Maintains semantic coherence across domains',
+        'Distributes workload to specialized agents',
+        'Ensures zero-loss context translation'
+      ]
     },
     rings: {
       core: {
-        name: 'Core Cognitive Architecture',
+        name: 'Core Forge Architecture',
         color: '#10b981',
         radius: 22,
         components: [
           {
-            id: 'CCA1',
-            name: 'VISION_PROCESSOR',
-            subtitle: 'Intent Recognition Core',
+            id: 'CFA1',
+            name: 'CONTEXT_ANALYZER',
+            subtitle: 'Reality Pattern Recognition',
             details: [
-              'Business Model Pattern Matching',
-              'Strategic Goal Synthesis Engine',
-              'Market Opportunity Identification',
-              'Value Proposition Analysis Matrix',
-              'Industry Template Recognition',
-              'Revenue Potential Assessment'
+              'Multi-Modal Context Parsing',
+              'Intent Classification Engine',
+              'Domain Boundary Detection',
+              'Complexity Assessment Matrix',
+              'User Journey Mapping',
+              'Contextual Priority Scoring'
             ],
-            metrics: 'Processes 1000+ business patterns/sec',
+            metrics: 'Processes 2000+ context patterns/sec',
             angle: 0,
             performance: 98,
-            status: 'active' as const
+            status: 'active' as const,
+            role: 'Primary Context Interpreter',
+            interplay: [
+              'Feeds parsed context to REQUIREMENT_FORGE',
+              'Validates interpretations with SEMANTIC_GUARDIAN',
+              'Coordinates with IMPLEMENTATION_WEAVER for feasibility'
+            ]
           },
           {
-            id: 'CCA2',
-            name: 'REQUIREMENT_SYNTHESIZER',
+            id: 'CFA2',
+            name: 'REQUIREMENT_FORGE',
             subtitle: 'Specification Intelligence',
             details: [
               'Functional Requirement Mining',
@@ -90,14 +106,20 @@ const CognitiveArchitecture = () => {
               'Edge Case Identification',
               'Performance Threshold Analysis'
             ],
-            metrics: '99.7% Requirement Accuracy',
+            metrics: '99.8% Requirement Accuracy',
             angle: 60,
             performance: 97,
-            status: 'active' as const
+            status: 'active' as const,
+            role: 'Requirements Architect',
+            interplay: [
+              'Receives context from CONTEXT_ANALYZER',
+              'Collaborates with CONSTRAINT_WEAVER on limitations',
+              'Provides specs to ARCHITECTURE_GENERATOR'
+            ]
           },
           {
-            id: 'CCA3',
-            name: 'CONSTRAINT_ORCHESTRATOR',
+            id: 'CFA3',
+            name: 'CONSTRAINT_WEAVER',
             subtitle: 'Limitation Intelligence',
             details: [
               'Platform Restriction Discovery',
@@ -107,13 +129,19 @@ const CognitiveArchitecture = () => {
               'Resource Allocation Optimization',
               'Technical Debt Management'
             ],
-            metrics: '234+ Constraint Scenarios Handled',
+            metrics: '300+ Constraint Scenarios Handled',
             angle: 120,
             performance: 94,
-            status: 'optimizing' as const
+            status: 'optimizing' as const,
+            role: 'Constraint Orchestrator',
+            interplay: [
+              'Works with REQUIREMENT_FORGE on feasibility',
+              'Informs ARCHITECTURE_GENERATOR of limitations',
+              'Coordinates with deployment agents on resource constraints'
+            ]
           },
           {
-            id: 'CCA4',
+            id: 'CFA4',
             name: 'ARCHITECTURE_GENERATOR',
             subtitle: 'Structure Intelligence',
             details: [
@@ -124,14 +152,20 @@ const CognitiveArchitecture = () => {
               'Microservice Orchestration',
               'Data Flow Architecture Design'
             ],
-            metrics: '85% Optimization Improvement',
+            metrics: '92% Optimization Improvement',
             angle: 180,
             performance: 96,
-            status: 'active' as const
+            status: 'active' as const,
+            role: 'System Architect',
+            interplay: [
+              'Receives requirements from REQUIREMENT_FORGE',
+              'Considers constraints from CONSTRAINT_WEAVER',
+              'Provides blueprints to IMPLEMENTATION_WEAVER'
+            ]
           },
           {
-            id: 'CCA5',
-            name: 'IMPLEMENTATION_COORDINATOR',
+            id: 'CFA5',
+            name: 'IMPLEMENTATION_WEAVER',
             subtitle: 'Execution Intelligence',
             details: [
               'Development Task Orchestration',
@@ -141,13 +175,19 @@ const CognitiveArchitecture = () => {
               'Quality Assurance Integration',
               'Deployment Pipeline Management'
             ],
-            metrics: '98% Automation Achievement',
+            metrics: '99% Automation Achievement',
             angle: 240,
             performance: 99,
-            status: 'active' as const
+            status: 'active' as const,
+            role: 'Implementation Coordinator',
+            interplay: [
+              'Executes plans from ARCHITECTURE_GENERATOR',
+              'Coordinates with Forge Agents for specialized tasks',
+              'Reports progress to DEPLOYMENT_ORCHESTRATOR'
+            ]
           },
           {
-            id: 'CCA6',
+            id: 'CFA6',
             name: 'DEPLOYMENT_ORCHESTRATOR',
             subtitle: 'Production Intelligence',
             details: [
@@ -161,36 +201,48 @@ const CognitiveArchitecture = () => {
             metrics: '99.9% Uptime Guarantee',
             angle: 300,
             performance: 100,
-            status: 'active' as const
+            status: 'active' as const,
+            role: 'Production Guardian',
+            interplay: [
+              'Receives deployment plans from IMPLEMENTATION_WEAVER',
+              'Coordinates with infrastructure agents',
+              'Monitors system health and reports to FORGE nucleus'
+            ]
           }
         ]
       },
-      swarm: {
-        name: 'Swarm Intelligence Agents',
+      agents: {
+        name: 'Forge Intelligence Agents',
         color: '#f59e0b',
         radius: 32,
         components: [
           {
-            id: 'SA1',
-            name: 'ALPHA_AGENT',
-            subtitle: 'GHL Integration Specialist',
+            id: 'FA1',
+            name: 'ALPHA_FORGE',
+            subtitle: 'Integration Specialist',
             details: [
               'OAuth Token Management & Refresh',
-              'Rate Limit Orchestration (5 req/sec)',
+              'Rate Limit Orchestration',
               'Workflow Template Generation',
               'Field Preservation Algorithms',
               'Webhook Self-Healing Protocols',
               'Template Library Optimization'
             ],
-            metrics: '100% Token Refresh Success',
+            metrics: '100% Integration Success Rate',
             angle: 15,
             performance: 100,
-            status: 'active' as const
+            status: 'active' as const,
+            role: 'Integration Specialist',
+            interplay: [
+              'Manages external system connections',
+              'Reports integration status to core systems',
+              'Coordinates with other agents for complex integrations'
+            ]
           },
           {
-            id: 'SA2',
-            name: 'BRAVO_AGENT',
-            subtitle: 'Assistable Voice Architect',
+            id: 'FA2',
+            name: 'BRAVO_FORGE',
+            subtitle: 'Voice & Conversation Architect',
             details: [
               'Voice Configuration Engine',
               'Tool State Preservation',
@@ -199,16 +251,21 @@ const CognitiveArchitecture = () => {
               'Browser Automation Scripts',
               'Configuration Injection System'
             ],
-            metrics: '97.3% Voice Recognition Accuracy',
+            metrics: '98.1% Voice Recognition Accuracy',
             angle: 45,
-            performance: 97,
-            status: 'active' as const
+            performance: 98,
+            status: 'active' as const,
+            role: 'Conversation Interface Manager',
+            interplay: [
+              'Interfaces with users through voice channels',
+              'Translates voice commands to system actions',
+              'Collaborates with CONTEXT_ANALYZER for intent understanding'
+            ]
           },
-          // ... continuing with all swarm agents
           {
-            id: 'SA3',
-            name: 'CHARLIE_AGENT',
-            subtitle: 'MCP Pattern Analyst',
+            id: 'FA3',
+            name: 'CHARLIE_FORGE',
+            subtitle: 'Protocol Pattern Analyst',
             details: [
               'Server Recommendation Engine',
               'Integration Pattern Matcher',
@@ -217,34 +274,46 @@ const CognitiveArchitecture = () => {
               'Message Queue Orchestration',
               'Event-Driven Architecture'
             ],
-            metrics: '50+ Integration Patterns',
+            metrics: '75+ Integration Patterns',
             angle: 75,
             performance: 95,
-            status: 'optimizing' as const
+            status: 'optimizing' as const,
+            role: 'Protocol Harmonizer',
+            interplay: [
+              'Analyzes communication patterns between systems',
+              'Optimizes data flow protocols',
+              'Ensures interoperability across platforms'
+            ]
           }
         ]
       },
-      revenue: {
-        name: 'AI Employee Revenue Engines',
+      specialized: {
+        name: 'Specialized Forge Systems',
         color: '#ef4444',
         radius: 42,
         components: [
           {
-            id: 'AE1',
-            name: 'RECEPTIONIST_CORE',
-            subtitle: 'Emergency Revenue Intelligence',
+            id: 'SF1',
+            name: 'QUANTUM_PROCESSOR',
+            subtitle: 'Advanced Context Intelligence',
             details: [
-              '24/7 Call Handling Automation',
-              'Emergency Detection (<5 seconds)',
-              'Appointment Orchestration System',
-              'Multi-Language Support Integration',
-              'Voice Recognition Processing',
-              'Customer Priority Routing'
+              '24/7 Context Processing',
+              'Quantum State Management',
+              'Multi-Dimensional Analysis',
+              'Parallel Processing Optimization',
+              'Real-Time Context Synthesis',
+              'Predictive Context Modeling'
             ],
-            metrics: '$1,650 avg emergency | 97.3% Success Rate',
+            metrics: 'Processes infinite context states simultaneously',
             angle: 30,
-            performance: 97,
-            status: 'active' as const
+            performance: 99,
+            status: 'active' as const,
+            role: 'Advanced Context Processor',
+            interplay: [
+              'Handles complex multi-dimensional contexts',
+              'Supports core systems with advanced analytics',
+              'Provides predictive insights to FORGE nucleus'
+            ]
           }
         ]
       }
@@ -252,9 +321,9 @@ const CognitiveArchitecture = () => {
   }), []);
 
   const getComponentIcon = useCallback((id: string) => {
-    if (id.startsWith('CCA')) return Brain;
-    if (id.startsWith('SA')) return Settings;
-    if (id.startsWith('AE')) return Target;
+    if (id.startsWith('CFA')) return Brain;
+    if (id.startsWith('FA')) return Settings;
+    if (id.startsWith('SF')) return Target;
     if (id.startsWith('BA')) return Search;
     if (id.startsWith('PI')) return Database;
     if (id.startsWith('LE')) return Lightbulb;
@@ -352,6 +421,11 @@ const CognitiveArchitecture = () => {
           >
             <div className="font-bold text-sm">{component.name}</div>
             <div className="text-gray-300 mt-1">{component.subtitle}</div>
+            {component.role && (
+              <div className="text-blue-300 text-xs mt-2 font-semibold">
+                🎯 {component.role}
+              </div>
+            )}
             {component.metrics && (
               <div className="text-yellow-300 text-xs mt-2 font-semibold">
                 📊 {component.metrics}
@@ -378,7 +452,7 @@ const CognitiveArchitecture = () => {
   };
 
   const NucleusNode = () => {
-    const nucleus = cognitiveSystem.nucleus;
+    const nucleus = forgeSystem.nucleus;
     const isSelected = selectedComponent?.id === nucleus.id;
 
     return (
@@ -405,7 +479,7 @@ const CognitiveArchitecture = () => {
           <div className="text-center">
             <Brain size={36} className="mx-auto mb-2" />
             <div className="text-xs font-bold leading-tight">
-              SUPREME<br/>COGNITIVE<br/>NUCLEUS
+              FORGE<br/>ORCHESTRATION<br/>NUCLEUS
             </div>
           </div>
 
@@ -420,7 +494,7 @@ const CognitiveArchitecture = () => {
   };
 
   const ConnectionLines = () => {
-    const allComponents = Object.values(cognitiveSystem.rings).flatMap(ring => ring.components);
+    const allComponents = Object.values(forgeSystem.rings).flatMap(ring => ring.components);
 
     return (
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
@@ -432,12 +506,12 @@ const CognitiveArchitecture = () => {
         </defs>
         
         {allComponents.map((component) => {
-          const ringName = Object.keys(cognitiveSystem.rings).find(key => 
-            cognitiveSystem.rings[key as keyof typeof cognitiveSystem.rings].components.some(c => c.id === component.id)
+          const ringName = Object.keys(forgeSystem.rings).find(key => 
+            forgeSystem.rings[key as keyof typeof forgeSystem.rings].components.some(c => c.id === component.id)
           );
           if (!ringName) return null;
           
-          const ring = cognitiveSystem.rings[ringName as keyof typeof cognitiveSystem.rings];
+          const ring = forgeSystem.rings[ringName as keyof typeof forgeSystem.rings];
           const componentPos = calculatePosition(component.angle, ring.radius);
           
           return (
@@ -499,6 +573,33 @@ const CognitiveArchitecture = () => {
         </div>
 
         <div className="p-6 overflow-y-auto flex-1">
+          {'role' in selectedComponent && selectedComponent.role && (
+            <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-4 rounded-xl mb-6 border border-blue-500/20">
+              <div className="text-blue-300 font-semibold mb-2 flex items-center">
+                <Target size={16} className="mr-2" />
+                System Role
+              </div>
+              <div className="text-white font-medium">{selectedComponent.role}</div>
+            </div>
+          )}
+
+          {'interplay' in selectedComponent && selectedComponent.interplay && (
+            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-4 rounded-xl mb-6 border border-green-500/20">
+              <div className="text-green-300 font-semibold mb-2 flex items-center">
+                <Network size={16} className="mr-2" />
+                System Interplay
+              </div>
+              <div className="space-y-2">
+                {selectedComponent.interplay.map((interaction, index) => (
+                  <div key={index} className="text-gray-200 text-sm flex items-start">
+                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    {interaction}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
           {'metrics' in selectedComponent && selectedComponent.metrics && (
             <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 p-4 rounded-xl mb-6 border border-yellow-500/20">
               <div className="text-yellow-300 font-semibold mb-2 flex items-center">
@@ -548,66 +649,79 @@ const CognitiveArchitecture = () => {
   };
 
   const ModernControlPanel = () => (
-    <div className="fixed left-6 top-6 bg-black/80 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/20 z-40 overflow-hidden max-w-sm">
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-yellow-400 mb-6 flex items-center">
-          <Settings size={24} className="mr-3" />
-          Neural Control Center
-        </h3>
+    <div className={`fixed left-6 top-6 bg-black/80 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/20 z-40 overflow-hidden transition-all duration-300 ${
+      configPanelOpen ? 'max-w-sm' : 'max-w-12'
+    }`}>
+      <div className="flex items-center">
+        <button
+          onClick={() => setConfigPanelOpen(!configPanelOpen)}
+          className="p-3 text-yellow-400 hover:text-yellow-300 transition-colors border-r border-white/10"
+        >
+          {configPanelOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+        </button>
+        
+        {configPanelOpen && (
+          <div className="p-6">
+            <h3 className="text-xl font-bold text-yellow-400 mb-6 flex items-center">
+              <Settings size={24} className="mr-3" />
+              Forge Control Center
+            </h3>
 
-        <div className="space-y-6">
-          <div>
-            <label className="text-sm font-semibold text-gray-300 block mb-3">System Focus</label>
-            <select
-              value={activeRing}
-              onChange={(e) => setActiveRing(e.target.value)}
-              className="w-full bg-gray-800/80 backdrop-blur-sm text-white p-3 rounded-xl border border-gray-600/50 focus:border-blue-500 focus:outline-none transition-all"
-            >
-              <option value="all">🌐 All Systems</option>
-              <option value="core">🧠 Core Architecture</option>
-              <option value="swarm">🤖 Swarm Intelligence</option>
-              <option value="revenue">💰 Revenue Engines</option>
-            </select>
-          </div>
+            <div className="space-y-6">
+              <div>
+                <label className="text-sm font-semibold text-gray-300 block mb-3">System Focus</label>
+                <select
+                  value={activeRing}
+                  onChange={(e) => setActiveRing(e.target.value)}
+                  className="w-full bg-gray-800/80 backdrop-blur-sm text-white p-3 rounded-xl border border-gray-600/50 focus:border-blue-500 focus:outline-none transition-all"
+                >
+                  <option value="all">🌐 All Systems</option>
+                  <option value="core">🧠 Core Architecture</option>
+                  <option value="agents">🤖 Forge Agents</option>
+                  <option value="specialized">⚡ Specialized Systems</option>
+                </select>
+              </div>
 
-          <div>
-            <label className="text-sm font-semibold text-gray-300 block mb-3">View Mode</label>
-            <div className="grid grid-cols-3 gap-2">
-              {(['overview', 'detailed', 'performance'] as const).map((mode) => (
+              <div>
+                <label className="text-sm font-semibold text-gray-300 block mb-3">View Mode</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['overview', 'detailed', 'performance'] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      onClick={() => setViewMode(mode)}
+                      className={`p-2 rounded-lg text-xs font-medium transition-all ${
+                        viewMode === mode
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                      }`}
+                    >
+                      {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-xl">
+                <span className="text-sm font-medium text-gray-300">Neural Animation</span>
                 <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`p-2 rounded-lg text-xs font-medium transition-all ${
-                    viewMode === mode
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                  onClick={() => setIsAnimating(!isAnimating)}
+                  className={`p-2 rounded-lg transition-all ${
+                    isAnimating ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-300'
                   }`}
                 >
-                  {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                  {isAnimating ? <Pause size={16} /> : <Play size={16} />}
                 </button>
-              ))}
+              </div>
+              
+              <button
+                onClick={() => setSelectedComponent(forgeSystem.nucleus)}
+                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105"
+              >
+                🎯 Access Forge Core
+              </button>
             </div>
           </div>
-          
-          <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-xl">
-            <span className="text-sm font-medium text-gray-300">Neural Animation</span>
-            <button
-              onClick={() => setIsAnimating(!isAnimating)}
-              className={`p-2 rounded-lg transition-all ${
-                isAnimating ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-300'
-              }`}
-            >
-              {isAnimating ? <Pause size={16} /> : <Play size={16} />}
-            </button>
-          </div>
-          
-          <button
-            onClick={() => setSelectedComponent(cognitiveSystem.nucleus)}
-            className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105"
-          >
-            🎯 Access Neural Core
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -637,7 +751,7 @@ const CognitiveArchitecture = () => {
       <NucleusNode />
       
       {/* Component rings */}
-      {Object.entries(cognitiveSystem.rings).map(([ringKey, ring]) => (
+      {Object.entries(forgeSystem.rings).map(([ringKey, ring]) => (
         (activeRing === 'all' || activeRing === ringKey) && 
         ring.components.map(component => (
           <ComponentNode
@@ -655,13 +769,13 @@ const CognitiveArchitecture = () => {
       {/* Animated title */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
         <div className="text-6xl font-bold text-yellow-400/10 text-center leading-tight select-none">
-          SUPREME<br/>COGNITIVE<br/>ARCHITECTURE
+          FORGE<br/>CONTEXT<br/>PROTOCOL
         </div>
       </div>
 
       {/* Footer branding */}
       <div className="absolute bottom-6 right-6 text-gray-500 text-sm font-medium">
-        Powered by <span className="text-yellow-400 font-bold">Prompted LLC</span> • Swarm Context Protocol v2.0
+        Powered by <span className="text-yellow-400 font-bold">Skyward Prompted LLC</span> • <span className="text-blue-400 font-bold">ubiquity OS</span> by Prompted
       </div>
     </div>
   );
