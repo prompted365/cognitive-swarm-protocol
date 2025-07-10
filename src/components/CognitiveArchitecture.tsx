@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, Zap, Brain, Target, Settings, Database, Shield, Lightbulb, X, Play, Pause, ChevronLeft, ChevronRight, Network } from 'lucide-react';
 
@@ -160,7 +159,7 @@ const CognitiveArchitecture = () => {
           },
           {
             id: 'CFA4',
-            name: 'ARCHITECTURE_GENERATOR',
+            name: 'Homeskillet-v7.1',
             subtitle: 'Structure Intelligence & System Design Orchestrator',
             details: [
               'Component Relationship Modeling',
