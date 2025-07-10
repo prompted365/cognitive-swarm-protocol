@@ -41,19 +41,19 @@ const CognitiveArchitecture = () => {
   const [viewMode, setViewMode] = useState<'overview' | 'detailed' | 'performance'>('overview');
   const [configPanelOpen, setConfigPanelOpen] = useState(true);
   
-  // Dynamic Claude Code Hooks & MCP Integration
+  // Dynamic Claude Code Hooks & MCP Server Integration
   const [isConnected, setIsConnected] = useState(false);
   const [realTimeData, setRealTimeData] = useState<{[key: string]: any}>({});
-  const [mcpStatus, setMcpStatus] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected');
+  const [mcpStatus, setMcpStatus] = useState<'disconnected' | 'starting' | 'running'>('disconnected');
   const [streamingUpdates, setStreamingUpdates] = useState<string[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
-  const mcpClientRef = useRef<any>(null);
+  const mcpServerRef = useRef<any>(null);
 
   // Initialize Claude Code Hooks and MCP Connection
   useEffect(() => {
     const initializeClaudeHooks = async () => {
       try {
-        setMcpStatus('connecting');
+        setMcpStatus('starting');
         
         // Simulate Claude Code Hooks initialization
         const claudeHooks = {
@@ -74,7 +74,7 @@ const CognitiveArchitecture = () => {
 
         ws.onopen = () => {
           setIsConnected(true);
-          setMcpStatus('connected');
+          setMcpStatus('running');
           console.log('Claude Code Hooks: Connected');
         };
 
@@ -88,8 +88,8 @@ const CognitiveArchitecture = () => {
           setMcpStatus('disconnected');
         };
 
-        // Initialize MCP Client
-        initializeMCPClient();
+        // Initialize MCP Server
+        initializeMCPServer();
 
       } catch (error) {
         console.error('Failed to initialize Claude Hooks:', error);
@@ -106,28 +106,60 @@ const CognitiveArchitecture = () => {
     };
   }, []);
 
-  const initializeMCPClient = useCallback(async () => {
+  const initializeMCPServer = useCallback(async () => {
     try {
-      // Simulate MCP Client initialization with TypeScript SDK
-      mcpClientRef.current = {
-        servers: [],
-        connect: async (serverUri: string) => {
-          console.log(`Connecting to MCP Server: ${serverUri}`);
-          return { status: 'connected', capabilities: ['tools', 'resources', 'prompts'] };
+      // Initialize MCP Server that exposes cognitive architecture tools to Claude
+      mcpServerRef.current = {
+        name: 'cognitive-architecture-server',
+        version: '1.0.0',
+        capabilities: {
+          tools: true,
+          resources: true,
+          prompts: true
         },
-        listTools: async () => {
-          return [
-            { name: 'cognitive_analyzer', description: 'Analyzes cognitive patterns' },
-            { name: 'performance_monitor', description: 'Monitors system performance' },
-            { name: 'integration_manager', description: 'Manages platform integrations' }
-          ];
-        },
-        callTool: async (name: string, args: any) => {
+        tools: [
+          {
+            name: 'cognitive_analyzer',
+            description: 'Analyzes cognitive patterns and provides insights',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                target: { type: 'string' },
+                depth: { type: 'string', enum: ['surface', 'deep', 'comprehensive'] }
+              }
+            }
+          },
+          {
+            name: 'performance_monitor', 
+            description: 'Monitors system performance and provides metrics',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                component: { type: 'string' },
+                timeframe: { type: 'string' }
+              }
+            }
+          },
+          {
+            name: 'integration_manager',
+            description: 'Manages platform integrations and connections',
+            inputSchema: {
+              type: 'object', 
+              properties: {
+                action: { type: 'string', enum: ['status', 'connect', 'disconnect'] },
+                platform: { type: 'string' }
+              }
+            }
+          }
+        ],
+        handleToolCall: async (name: string, args: any) => {
           return simulateToolCall(name, args);
         }
       };
+
+      console.log('MCP Server initialized with cognitive architecture tools');
     } catch (error) {
-      console.error('MCP Client initialization failed:', error);
+      console.error('MCP Server initialization failed:', error);
     }
   }, []);
 
@@ -1217,17 +1249,17 @@ const CognitiveArchitecture = () => {
           </div>
         </div>
 
-        {/* MCP Status */}
+        {/* MCP Server Status */}
         <div className={`px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300 ${
-          mcpStatus === 'connected' 
+          mcpStatus === 'running' 
             ? 'bg-blue-500/20 border-blue-400/50 text-blue-100'
-            : mcpStatus === 'connecting'
+            : mcpStatus === 'starting'
             ? 'bg-yellow-500/20 border-yellow-400/50 text-yellow-100'
             : 'bg-gray-500/20 border-gray-400/50 text-gray-100'
         }`}>
           <div className="flex items-center gap-2 text-sm">
             <Network className="w-4 h-4" />
-            <span>MCP: {mcpStatus}</span>
+            <span>MCP Server: {mcpStatus}</span>
           </div>
         </div>
 
