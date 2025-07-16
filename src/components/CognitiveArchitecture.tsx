@@ -252,8 +252,8 @@ const CognitiveArchitecture = () => {
     console.log(`Status update for ${componentId}: ${status}`);
   }, []);
 
-  // Enhanced Forge context protocol system data with complete story integration
-  const forgeSystem = useMemo(() => ({
+  // Enhanced Swarm context protocol system data with complete story integration
+  const swarmSystem = useMemo(() => ({
     nucleus: {
       id: 'HARMONY',
       name: 'Harmony-v2.1',
@@ -271,7 +271,7 @@ const CognitiveArchitecture = () => {
       ],
       color: '#fbbf24',
       position: { x: 50, y: 50 },
-      role: 'Supreme Cognitive Orchestration Nucleus & Fusion Kernel',
+      role: 'Supreme Cognitive Orchestration Nucleus & Swarm Kernel',
       interplay: [
         'Orchestrates all subsystem interactions through bidirectional semantic bridging',
         'Maintains perfect fidelity across abstraction layers via cognitive traversal protocols',
@@ -283,12 +283,12 @@ const CognitiveArchitecture = () => {
     },
     rings: {
       core: {
-        name: 'Core Forge Architecture',
+        name: 'Core Swarm Architecture',
         color: '#10b981',
         radius: 22,
         components: [
           {
-            id: 'CFA1',
+            id: 'CSA1',
             name: 'VISION_PROCESSOR',
             subtitle: 'Intent Recognition & Pattern Extraction Core',
             details: [
@@ -307,7 +307,7 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'Primary Vision Intelligence & Business Pattern Orchestrator',
             interplay: [
-              'Synthesizes extracted business vision to REQUIREMENT_FORGE through semantic injection protocols',
+              'Synthesizes extracted business vision to REQUIREMENT_SWARM through semantic injection protocols',
               'Validates interpretations with SEMANTIC_GUARDIAN via coherence verification algorithms',
               'Coordinates with IMPLEMENTATION_WEAVER through feasibility cross-referencing matrices',
               'Feeds blueprint intelligence to BLUEPRINT_ANALYZER through pattern recognition channels',
@@ -315,8 +315,8 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'CFA2',
-            name: 'REQUIREMENT_FORGE',
+            id: 'CSA2',
+            name: 'REQUIREMENT_SWARM',
             subtitle: 'Specification Intelligence & Constraint Discovery',
             details: [
               'Functional Requirement Mining with 99.8% accuracy',
@@ -342,7 +342,7 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'CFA3',
+            id: 'CSA3',
             name: 'CONSTRAINT_WEAVER',
             subtitle: 'Limitation Intelligence & Workaround Strategy Engine',
             details: [
@@ -361,15 +361,15 @@ const CognitiveArchitecture = () => {
             status: 'optimizing' as const,
             role: 'Constraint Orchestrator & Limitation Transcendence Specialist',
             interplay: [
-              'Collaborates with REQUIREMENT_FORGE through feasibility matrix validation protocols',
+              'Collaborates with REQUIREMENT_SWARM through feasibility matrix validation protocols',
               'Informs ARCHITECTURE_GENERATOR via constraint boundary mapping systems',
-              'Coordinates with FORGE_AGENTS through resource allocation synchronization',
+              'Coordinates with SWARM_AGENTS through resource allocation synchronization',
               'Optimizes with LEARNING_SYSTEMS through constraint pattern learning mechanisms',
               'Harmonizes with PLATFORM_INTEGRATION through workaround strategy sharing'
             ]
           },
           {
-            id: 'CFA4',
+            id: 'CSA4',
             name: 'Homeskillet-v7.1',
             subtitle: 'Structure Intelligence & System Design Orchestrator',
             details: [
@@ -388,7 +388,7 @@ const CognitiveArchitecture = () => {
             status: 'active' as const,
             role: 'System Architect & Infrastructure Intelligence Coordinator',
             interplay: [
-              'Receives requirements from REQUIREMENT_FORGE via structured specification intake',
+              'Receives requirements from REQUIREMENT_SWARM via structured specification intake',
               'Considers constraints from CONSTRAINT_WEAVER through limitation integration protocols',
               'Provisions blueprints to IMPLEMENTATION_WEAVER via architectural transmission systems',
               'Coordinates with DEPLOYMENT_ORCHESTRATOR through infrastructure planning synchronization',
@@ -396,7 +396,7 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'CFA5',
+            id: 'CSA5',
             name: 'IMPLEMENTATION_WEAVER',
             subtitle: 'Execution Intelligence & Development Coordination Core',
             details: [
@@ -416,14 +416,14 @@ const CognitiveArchitecture = () => {
             role: 'Implementation Coordinator & Execution Intelligence Orchestrator',
             interplay: [
               'Executes plans from ARCHITECTURE_GENERATOR through blueprint materialization protocols',
-              'Coordinates with FORGE_AGENTS via specialized task delegation systems',
+              'Coordinates with SWARM_AGENTS via specialized task delegation systems',
               'Reports progress to DEPLOYMENT_ORCHESTRATOR through status synchronization channels',
               'Integrates with LEARNING_SYSTEMS through implementation pattern capture mechanisms',
               'Harmonizes with QUALITY_ASSURANCE through validation protocol coordination'
             ]
           },
           {
-            id: 'CFA6',
+            id: 'CSA6',
             name: 'DEPLOYMENT_ORCHESTRATOR',
             subtitle: 'Production Intelligence & Infrastructure Coordination',
             details: [
@@ -452,13 +452,13 @@ const CognitiveArchitecture = () => {
         ]
       },
       agents: {
-        name: 'Forge Intelligence Agents',
+        name: 'Swarm Intelligence Agents',
         color: '#f59e0b',
         radius: 32,
         components: [
           {
-            id: 'FA1',
-            name: 'ALPHA_FORGE',
+            id: 'SA1',
+            name: 'ALPHA_SWARM',
             subtitle: 'GHL Integration Specialist & OAuth Orchestrator',
             details: [
               'OAuth Token Management & Refresh (100% success)',
@@ -478,14 +478,14 @@ const CognitiveArchitecture = () => {
             interplay: [
               'Manages external system connections through protocol harmonization matrices',
               'Reports integration status to core systems via health telemetry broadcasting',
-              'Coordinates with BRAVO_FORGE through cross-platform synchronization protocols',
+              'Coordinates with BRAVO_SWARM through cross-platform synchronization protocols',
               'Optimizes with CONSTRAINT_WEAVER through limitation transcendence strategies',
               'Learns from PLATFORM_INTEGRATION through pattern recognition enhancement'
             ]
           },
           {
-            id: 'FA2',
-            name: 'BRAVO_FORGE',
+            id: 'SA2',
+            name: 'BRAVO_SWARM',
             subtitle: 'Voice & Conversation Architect',
             details: [
               'Voice Configuration Engine',
@@ -511,8 +511,8 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'FA3',
-            name: 'CHARLIE_FORGE',
+            id: 'SA3',
+            name: 'CHARLIE_SWARM',
             subtitle: 'MCP Pattern Analyst & Protocol Harmonizer',
             details: [
               'Server Recommendation Engine',
@@ -538,8 +538,8 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'FA4',
-            name: 'DELTA_FORGE',
+            id: 'SA4',
+            name: 'DELTA_SWARM',
             subtitle: 'React Frontend Orchestrator',
             details: [
               'Component Hierarchy Designer',
@@ -559,14 +559,14 @@ const CognitiveArchitecture = () => {
             interplay: [
               'Designs component hierarchies through architectural intelligence protocols',
               'Manages state coordination via optimization synchronization systems',
-              'Harmonizes with ECHO_FORGE through frontend-backend communication protocols',
+              'Harmonizes with ECHO_SWARM through frontend-backend communication protocols',
               'Integrates with PERFORMANCE_ENGINES through efficiency enhancement mechanisms',
               'Evolves with USER_EXPERIENCE_LEARNING through pattern optimization'
             ]
           },
           {
-            id: 'FA5',
-            name: 'ECHO_FORGE',
+            id: 'SA5',
+            name: 'ECHO_SWARM',
             subtitle: 'Express Backend Coordinator',
             details: [
               'API Gateway Architecture',
@@ -586,14 +586,14 @@ const CognitiveArchitecture = () => {
             interplay: [
               'Orchestrates API gateway architecture through endpoint coordination protocols',
               'Manages middleware chains via security integration systems',
-              'Coordinates with FOXTROT_FORGE through database optimization synchronization',
+              'Coordinates with FOXTROT_SWARM through database optimization synchronization',
               'Harmonizes with SECURITY_CORE through threat prevention integration',
               'Optimizes with PERFORMANCE_ENGINES through response time enhancement'
             ]
           },
           {
-            id: 'FA6',
-            name: 'FOXTROT_FORGE',
+            id: 'SA6',
+            name: 'FOXTROT_SWARM',
             subtitle: 'Database Intelligence Core',
             details: [
               'Schema Evolution Engine',
@@ -621,12 +621,12 @@ const CognitiveArchitecture = () => {
         ]
       },
       specialized: {
-        name: 'Specialized Forge Systems',
+        name: 'Specialized Swarm Systems',
         color: '#ef4444',
         radius: 42,
         components: [
           {
-            id: 'SF1',
+            id: 'SS1',
             name: 'QUANTUM_PROCESSOR',
             subtitle: 'Advanced Context Intelligence & Multi-Dimensional Analysis',
             details: [
@@ -653,7 +653,7 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'SF2',
+            id: 'SS2',
             name: 'LEARNING_ORCHESTRATOR',
             subtitle: 'Meta-Learning & Cognitive Evolution Engine',
             details: [
@@ -680,7 +680,7 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'SF3',
+            id: 'SS3',
             name: 'REVENUE_MAXIMIZER',
             subtitle: 'AI Employee Revenue Intelligence Matrix',
             details: [
@@ -707,7 +707,7 @@ const CognitiveArchitecture = () => {
             ]
           },
           {
-            id: 'SF4',
+            id: 'SS4',
             name: 'SEMANTIC_GUARDIAN',
             subtitle: 'Fidelity Preservation & Integrity Core',
             details: [
@@ -744,7 +744,7 @@ const CognitiveArchitecture = () => {
 
     const interval = setInterval(() => {
       // Simulate random component updates
-      const components = Object.values(forgeSystem.rings).flatMap(ring => ring.components);
+      const components = Object.values(swarmSystem.rings).flatMap(ring => ring.components);
       const randomComponent = components[Math.floor(Math.random() * components.length)];
       
       const mockUpdate = {
@@ -763,12 +763,12 @@ const CognitiveArchitecture = () => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [isConnected, handleRealTimeUpdate, forgeSystem.rings]);
+  }, [isConnected, handleRealTimeUpdate, swarmSystem.rings]);
 
   const getComponentIcon = useCallback((id: string) => {
-    if (id.startsWith('CFA')) return Brain;
-    if (id.startsWith('FA')) return Settings;
-    if (id.startsWith('SF')) return Target;
+    if (id.startsWith('CSA')) return Brain;
+    if (id.startsWith('SA')) return Settings;
+    if (id.startsWith('SS')) return Target;
     if (id.startsWith('BA')) return Search;
     if (id.startsWith('PI')) return Database;
     if (id.startsWith('LE')) return Lightbulb;
@@ -897,7 +897,7 @@ const CognitiveArchitecture = () => {
   };
 
   const NucleusNode = () => {
-    const nucleus = forgeSystem.nucleus;
+    const nucleus = swarmSystem.nucleus;
     const isSelected = selectedComponent?.id === nucleus.id;
 
     return (
@@ -939,7 +939,7 @@ const CognitiveArchitecture = () => {
   };
 
   const ConnectionLines = () => {
-    const allComponents = Object.values(forgeSystem.rings).flatMap(ring => ring.components);
+    const allComponents = Object.values(swarmSystem.rings).flatMap(ring => ring.components);
 
     return (
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
@@ -951,12 +951,12 @@ const CognitiveArchitecture = () => {
         </defs>
         
         {allComponents.map((component) => {
-          const ringName = Object.keys(forgeSystem.rings).find(key => 
-            forgeSystem.rings[key as keyof typeof forgeSystem.rings].components.some(c => c.id === component.id)
+          const ringName = Object.keys(swarmSystem.rings).find(key => 
+            swarmSystem.rings[key as keyof typeof swarmSystem.rings].components.some(c => c.id === component.id)
           );
           if (!ringName) return null;
           
-          const ring = forgeSystem.rings[ringName as keyof typeof forgeSystem.rings];
+          const ring = swarmSystem.rings[ringName as keyof typeof swarmSystem.rings];
           const componentPos = calculatePosition(component.angle, ring.radius);
           
           return (
@@ -1109,7 +1109,7 @@ const CognitiveArchitecture = () => {
           <div className="p-6">
             <h3 className="text-xl font-bold text-yellow-400 mb-6 flex items-center">
               <Settings size={24} className="mr-3" />
-              Forge Control Center
+              Swarm Control Center
             </h3>
 
             <div className="space-y-6">
@@ -1122,7 +1122,7 @@ const CognitiveArchitecture = () => {
                 >
                   <option value="all">🌐 All Systems</option>
                   <option value="core">🧠 Core Architecture</option>
-                  <option value="agents">🤖 Forge Agents</option>
+                  <option value="agents">🤖 Swarm Agents</option>
                   <option value="specialized">⚡ Specialized Systems</option>
                 </select>
               </div>
@@ -1159,7 +1159,7 @@ const CognitiveArchitecture = () => {
               </div>
               
               <button
-                onClick={() => setSelectedComponent(forgeSystem.nucleus)}
+                onClick={() => setSelectedComponent(swarmSystem.nucleus)}
                 className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105"
               >
                 🎯 Access Harmony Core
@@ -1173,7 +1173,7 @@ const CognitiveArchitecture = () => {
                     <span className="text-green-400">6 Active</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-300">Forge Agents:</span>
+                    <span className="text-gray-300">Swarm Agents:</span>
                     <span className="text-green-400">6 Operational</span>
                   </div>
                   <div className="flex justify-between">
@@ -1224,7 +1224,7 @@ const CognitiveArchitecture = () => {
       <NucleusNode />
       
       {/* Component rings */}
-      {Object.entries(forgeSystem.rings).map(([ringKey, ring]) => (
+      {Object.entries(swarmSystem.rings).map(([ringKey, ring]) => (
         (activeRing === 'all' || activeRing === ringKey) && 
         ring.components.map(component => (
           <ComponentNode
@@ -1307,7 +1307,7 @@ const CognitiveArchitecture = () => {
       {/* Animated title */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
         <div className="text-6xl font-bold text-yellow-400/10 text-center leading-tight select-none">
-          FORGE<br/>CONTEXT<br/>PROTOCOL
+          SWARM<br/>CONTEXT<br/>PROTOCOL
         </div>
       </div>
 
