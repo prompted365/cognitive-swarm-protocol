@@ -1339,6 +1339,9 @@ const CognitiveArchitecture = () => {
       {/* Footer branding */}
       <div className="absolute bottom-6 right-6 text-gray-500 text-sm font-medium">
         Powered by <span className="text-yellow-400 font-bold">Skyward Prompted LLC</span> • <span className="text-blue-400 font-bold">ubiquity OS</span> by Prompted
+        <div className="text-xs text-gray-600 mt-1">
+          Special thanks to <span className="text-purple-400 font-semibold">ruvnet</span> 🙏
+        </div>
       </div>
 
       {/* Breakthrough achievement badge */}
