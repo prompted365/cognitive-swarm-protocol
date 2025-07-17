@@ -46,8 +46,18 @@ const CognitiveArchitecture = () => {
   const [realTimeData, setRealTimeData] = useState<{[key: string]: any}>({});
   const [mcpStatus, setMcpStatus] = useState<'disconnected' | 'starting' | 'running'>('disconnected');
   const [streamingUpdates, setStreamingUpdates] = useState<string[]>([]);
+  const [showStatusMessages, setShowStatusMessages] = useState(true);
   const wsRef = useRef<WebSocket | null>(null);
   const mcpServerRef = useRef<any>(null);
+
+  // Auto-hide status messages after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowStatusMessages(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Initialize Claude Code Hooks and MCP Connection
   useEffect(() => {
@@ -984,109 +994,122 @@ const CognitiveArchitecture = () => {
     if (!selectedComponent) return null;
 
     return (
-      <div className="fixed right-6 top-6 bottom-6 w-96 bg-black/80 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/20 overflow-hidden z-40">
-        <div className="p-6 border-b border-white/10">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              {React.createElement(getComponentIcon(selectedComponent.id), { 
-                size: 28, 
-                className: "text-yellow-400" 
-              })}
-              <h2 className="text-xl font-bold text-white">
-                {selectedComponent.name}
-              </h2>
+      <div className="fixed inset-0 z-40 lg:inset-auto lg:right-6 lg:top-6 lg:bottom-6 lg:w-96">
+        {/* Mobile backdrop */}
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm"
+          onClick={() => setSelectedComponent(null)}
+        />
+        
+        {/* Modal content */}
+        <div className="relative h-full bg-black/90 backdrop-blur-xl text-white lg:rounded-2xl shadow-2xl border border-white/20 overflow-hidden flex flex-col">
+          {/* Header - fixed */}
+          <div className="p-4 lg:p-6 border-b border-white/10 flex-shrink-0">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                {React.createElement(getComponentIcon(selectedComponent.id), { 
+                  size: 28, 
+                  className: "text-yellow-400" 
+                })}
+                <h2 className="text-lg lg:text-xl font-bold text-white truncate">
+                  {selectedComponent.name}
+                </h2>
+              </div>
+              <button
+                onClick={() => setSelectedComponent(null)}
+                className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg flex-shrink-0"
+              >
+                <X size={20} />
+              </button>
             </div>
-            <button
-              onClick={() => setSelectedComponent(null)}
-              className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
-            >
-              <X size={20} />
-            </button>
+            
+            {'subtitle' in selectedComponent && selectedComponent.subtitle && (
+              <div className="text-sm lg:text-lg text-blue-300 mb-4 font-semibold">
+                {selectedComponent.subtitle}
+              </div>
+            )}
+            
+            {selectedComponent.description && (
+              <div className="text-gray-300 mb-4 leading-relaxed text-sm lg:text-base">
+                {selectedComponent.description}
+              </div>
+            )}
           </div>
-          
-          {'subtitle' in selectedComponent && selectedComponent.subtitle && (
-            <div className="text-lg text-blue-300 mb-4 font-semibold">
-              {selectedComponent.subtitle}
-            </div>
-          )}
-          
-          {selectedComponent.description && (
-            <div className="text-gray-300 mb-4 leading-relaxed">
-              {selectedComponent.description}
-            </div>
-          )}
-        </div>
 
-        <div className="p-6 overflow-y-auto flex-1">
-          {'role' in selectedComponent && selectedComponent.role && (
-            <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-4 rounded-xl mb-6 border border-blue-500/20">
-              <div className="text-blue-300 font-semibold mb-2 flex items-center">
-                <Target size={16} className="mr-2" />
-                System Role
-              </div>
-              <div className="text-white font-medium">{selectedComponent.role}</div>
-            </div>
-          )}
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-4 lg:p-6 space-y-6">
+              {'role' in selectedComponent && selectedComponent.role && (
+                <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-4 rounded-xl border border-blue-500/20">
+                  <div className="text-blue-300 font-semibold mb-2 flex items-center text-sm lg:text-base">
+                    <Target size={16} className="mr-2" />
+                    System Role
+                  </div>
+                  <div className="text-white font-medium text-sm lg:text-base">{selectedComponent.role}</div>
+                </div>
+              )}
 
-          {'interplay' in selectedComponent && selectedComponent.interplay && (
-            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-4 rounded-xl mb-6 border border-green-500/20">
-              <div className="text-green-300 font-semibold mb-2 flex items-center">
-                <Network size={16} className="mr-2" />
-                System Interplay
-              </div>
-              <div className="space-y-2">
-                {selectedComponent.interplay.map((interaction, index) => (
-                  <div key={index} className="text-gray-200 text-sm flex items-start">
-                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 mr-2 flex-shrink-0"></div>
-                    {interaction}
+              {'interplay' in selectedComponent && selectedComponent.interplay && (
+                <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-4 rounded-xl border border-green-500/20">
+                  <div className="text-green-300 font-semibold mb-2 flex items-center text-sm lg:text-base">
+                    <Network size={16} className="mr-2" />
+                    System Interplay
+                  </div>
+                  <div className="space-y-2">
+                    {selectedComponent.interplay.map((interaction, index) => (
+                      <div key={index} className="text-gray-200 text-xs lg:text-sm flex items-start">
+                        <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                        {interaction}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {'metrics' in selectedComponent && selectedComponent.metrics && (
+                <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 p-4 rounded-xl border border-yellow-500/20">
+                  <div className="text-yellow-300 font-semibold mb-2 flex items-center text-sm lg:text-base">
+                    <Zap size={16} className="mr-2" />
+                    Performance Metrics
+                  </div>
+                  <div className="text-white font-mono text-xs lg:text-sm break-words">{selectedComponent.metrics}</div>
+                </div>
+              )}
+              
+              {'performance' in selectedComponent && selectedComponent.performance && (
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-semibold text-gray-300">System Performance</span>
+                    <span className="text-lg font-bold text-white">{selectedComponent.performance}%</span>
+                  </div>
+                  <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full transition-all duration-1000 rounded-full"
+                      style={{ 
+                        width: `${selectedComponent.performance}%`,
+                        background: `linear-gradient(to right, ${getStatusColor(selectedComponent.status || 'active')}, ${getStatusColor(selectedComponent.status || 'active')}80)`
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-green-400 flex items-center">
+                  <Brain size={18} className="mr-2" />
+                  Core Capabilities
+                </h3>
+                {selectedComponent.details.map((detail, index) => (
+                  <div
+                    key={index}
+                    className="group flex items-start space-x-3 p-4 bg-gradient-to-r from-gray-800/50 to-gray-700/30 rounded-xl border-l-4 border-blue-500 hover:border-blue-400 transition-all duration-200 hover:bg-gray-700/50"
+                  >
+                    <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0 group-hover:bg-blue-300 transition-colors"></div>
+                    <div className="text-gray-200 group-hover:text-white transition-colors text-sm lg:text-base break-words">{detail}</div>
                   </div>
                 ))}
               </div>
             </div>
-          )}
-          
-          {'metrics' in selectedComponent && selectedComponent.metrics && (
-            <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 p-4 rounded-xl mb-6 border border-yellow-500/20">
-              <div className="text-yellow-300 font-semibold mb-2 flex items-center">
-                <Zap size={16} className="mr-2" />
-                Performance Metrics
-              </div>
-              <div className="text-white font-mono text-sm">{selectedComponent.metrics}</div>
-            </div>
-          )}
-          
-          {'performance' in selectedComponent && selectedComponent.performance && (
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-semibold text-gray-300">System Performance</span>
-                <span className="text-lg font-bold text-white">{selectedComponent.performance}%</span>
-              </div>
-              <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
-                <div 
-                  className="h-full transition-all duration-1000 rounded-full"
-                  style={{ 
-                    width: `${selectedComponent.performance}%`,
-                    background: `linear-gradient(to right, ${getStatusColor(selectedComponent.status || 'active')}, ${getStatusColor(selectedComponent.status || 'active')}80)`
-                  }}
-                />
-              </div>
-            </div>
-          )}
-          
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-green-400 flex items-center">
-              <Brain size={18} className="mr-2" />
-              Core Capabilities
-            </h3>
-            {selectedComponent.details.map((detail, index) => (
-              <div
-                key={index}
-                className="group flex items-start space-x-3 p-4 bg-gradient-to-r from-gray-800/50 to-gray-700/30 rounded-xl border-l-4 border-blue-500 hover:border-blue-400 transition-all duration-200 hover:bg-gray-700/50"
-              >
-                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0 group-hover:bg-blue-300 transition-colors"></div>
-                <div className="text-gray-200 group-hover:text-white transition-colors">{detail}</div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
@@ -1235,53 +1258,55 @@ const CognitiveArchitecture = () => {
         ))
       ))}
       
-      {/* Real-time Claude Code Hooks & MCP Status */}
-      <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
-        {/* Connection Status */}
-        <div className={`px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300 ${
-          isConnected 
-            ? 'bg-green-500/20 border-green-400/50 text-green-100' 
-            : 'bg-red-500/20 border-red-400/50 text-red-100'
-        }`}>
-          <div className="flex items-center gap-2 text-sm">
-            {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
-            <span>Claude Hooks: {isConnected ? 'Connected' : 'Disconnected'}</span>
-          </div>
-        </div>
-
-        {/* MCP Server Status */}
-        <div className={`px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300 ${
-          mcpStatus === 'running' 
-            ? 'bg-blue-500/20 border-blue-400/50 text-blue-100'
-            : mcpStatus === 'starting'
-            ? 'bg-yellow-500/20 border-yellow-400/50 text-yellow-100'
-            : 'bg-gray-500/20 border-gray-400/50 text-gray-100'
-        }`}>
-          <div className="flex items-center gap-2 text-sm">
-            <Network className="w-4 h-4" />
-            <span>MCP Server: {mcpStatus}</span>
-          </div>
-        </div>
-
-        {/* Real-time Metrics */}
-        {isConnected && (
-          <div className="px-3 py-2 rounded-lg backdrop-blur-md bg-black/40 border border-white/20">
-            <div className="flex items-center gap-2 text-sm text-white mb-2">
-              <Activity className="w-4 h-4" />
-              <span>Live Metrics</span>
-            </div>
-            <div className="space-y-1 text-xs text-gray-300">
-              {realTimeData.tokens && (
-                <div>Tokens: {realTimeData.tokens.total?.toLocaleString()}</div>
-              )}
-              {realTimeData.cognitive && (
-                <div>Analysis: {realTimeData.cognitive.status}</div>
-              )}
-              <div>Updates: {streamingUpdates.length}</div>
+      {/* Real-time Claude Code Hooks & MCP Status - with auto-hide */}
+      {showStatusMessages && (
+        <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
+          {/* Connection Status */}
+          <div className={`px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300 ${
+            isConnected 
+              ? 'bg-green-500/20 border-green-400/50 text-green-100' 
+              : 'bg-red-500/20 border-red-400/50 text-red-100'
+          }`}>
+            <div className="flex items-center gap-2 text-sm">
+              {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+              <span>Claude Hooks: {isConnected ? 'Connected' : 'Disconnected'}</span>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* MCP Server Status */}
+          <div className={`px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300 ${
+            mcpStatus === 'running' 
+              ? 'bg-blue-500/20 border-blue-400/50 text-blue-100'
+              : mcpStatus === 'starting'
+              ? 'bg-yellow-500/20 border-yellow-400/50 text-yellow-100'
+              : 'bg-gray-500/20 border-gray-400/50 text-gray-100'
+          }`}>
+            <div className="flex items-center gap-2 text-sm">
+              <Network className="w-4 h-4" />
+              <span>MCP Server: {mcpStatus}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Real-time Metrics */}
+      {isConnected && (
+        <div className="absolute top-4 right-4 mt-20 px-3 py-2 rounded-lg backdrop-blur-md bg-black/40 border border-white/20 z-50 max-w-xs">
+          <div className="flex items-center gap-2 text-sm text-white mb-2">
+            <Activity className="w-4 h-4" />
+            <span>Live Metrics</span>
+          </div>
+          <div className="space-y-1 text-xs text-gray-300">
+            {realTimeData.tokens && (
+              <div>Tokens: {realTimeData.tokens.total?.toLocaleString()}</div>
+            )}
+            {realTimeData.cognitive && (
+              <div>Analysis: {realTimeData.cognitive.status}</div>
+            )}
+            <div>Updates: {streamingUpdates.length}</div>
+          </div>
+        </div>
+      )}
 
       {/* Streaming Updates Feed */}
       {isConnected && streamingUpdates.length > 0 && (
