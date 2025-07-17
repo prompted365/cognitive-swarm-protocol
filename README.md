@@ -1,18 +1,114 @@
-# Welcome to your Lovable project
+## 🧠 Real-Time WebSocket Integration
 
-## Project info
+This cognitive UI system supports **live updates** from a backend orchestration engine via a WebSocket stream. These updates reflect real-time status, performance, and coordination metrics across all visualized swarm components.
 
-**URL**: https://lovable.dev/projects/389ba612-8e97-4d80-9585-a68bf4b6eead
+### 🔌 Connection Overview
 
-## How can I edit this code?
+The system establishes a live connection using the following WebSocket endpoint:
 
-There are several ways of editing your application.
+```
+wss://api.lovable.dev/cognitive-stream
+```
 
-**Use Lovable**
+### 🔄 WebSocket Lifecycle
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/389ba612-8e97-4d80-9585-a68bf4b6eead) and start prompting.
+On component mount, the system initiates and manages the socket lifecycle:
 
-Changes made via Lovable will be committed automatically to this repo.
+```ts
+const ws = new WebSocket('wss://api.lovable.dev/cognitive-stream');
+```
+
+#### ✅ On Open:
+
+* Sets `isConnected = true`
+* Transitions `mcpStatus` to `"running"`
+* Logs successful connection for Claude Code Hook simulation
+
+#### 🔁 On Message:
+
+* Parses incoming JSON payloads
+* Delegates handling to `handleRealTimeUpdate(data)`
+
+  * This drives live metrics, updates component state, and appends user-facing streaming logs
+
+#### ❌ On Close:
+
+* Sets `isConnected = false`
+* Transitions `mcpStatus` to `"disconnected"`
+* Optionally attempts reconnection (add logic if desired)
+
+---
+
+## 📡 Expected WebSocket Payloads
+
+The backend should emit messages in this format:
+
+```json
+{
+  "componentId": "CSA1",
+  "type": "performance_update",         // or "status_change"
+  "performance": 97,
+  "message": "VISION_PROCESSOR optimization cycle complete",
+  "updates": {
+    "efficiency": 94,
+    "throughput": 1250,
+    "errorRate": 0.02
+  }
+}
+```
+
+Payloads may also include:
+
+* `type: "status_change"` – updates the component's status (`active`, `idle`, `optimizing`)
+* `type: "cognitive_analysis"` – feeds insights into the global `realTimeData` store
+* `type: "token_update"` – tracks token usage for streaming Claude output
+
+---
+
+## 🛠️ Backend Source (Simulated or Real)
+
+This WebSocket feed is powered by one of two options:
+
+### 🔁 Simulated Mode (Dev Default)
+
+In development, real-time updates are faked using a local interval:
+
+```ts
+const interval = setInterval(() => {
+  const mockUpdate = { ... };
+  handleRealTimeUpdate(mockUpdate);
+}, 3000);
+```
+
+### 🚀 Live Mode (Claude + MCP Runtime)
+
+In production, connect to the actual backend emitting live swarm state via:
+
+* A real Claude orchestration engine using Claude Code Hooks
+* A backend MCP orchestration server (e.g., LangGraph, Express + SSE, or Claude SPARC runtime)
+
+---
+
+## 🧪 Dev Tips
+
+* To test WebSocket disconnection states, disconnect from internet or change the `wss://` endpoint.
+* You can modify the `simulateToolCall()` function to return mock diagnostics.
+* Toggle the `isAnimating` or `mcpStatus` states manually for visual debugging.
+
+---
+
+## 🔐 Security Note
+
+Ensure WebSocket traffic is secured:
+
+* Use `wss://` (secure socket layer)
+* Validate payloads against a schema
+* Consider auth token headers or signed connections for Claude production use
+
+---
+
+Let me know if you want this split into a **docs/architecture.md**, or embedded directly in the UI via a “Dev Console” panel.
+
 
 **Use your preferred IDE**
 
@@ -60,14 +156,4 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/389ba612-8e97-4d80-9585-a68bf4b6eead) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Using lovable.dev
