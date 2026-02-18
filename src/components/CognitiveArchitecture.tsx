@@ -1,5 +1,89 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Search, Zap, Brain, Target, Settings, Database, Shield, Lightbulb, X, Play, Pause, ChevronLeft, ChevronRight, Network, Activity, Wifi, WifiOff } from 'lucide-react';
+import { Search, Zap, Brain, Target, Settings, Database, Shield, Lightbulb, X, Play, Pause, ChevronLeft, ChevronRight, Network, Activity, Wifi, WifiOff, Radio, Eye, EyeOff, FileText, AlertTriangle, TrendingUp } from 'lucide-react';
+
+// ═══════════════════════════════════════════════════════════════
+// CGG v3 SIGNAL MANIFOLD — Canonical Event Schema
+// ═══════════════════════════════════════════════════════════════
+
+type SignalKind = 'BEACON' | 'TENSION' | 'LESSON';
+type SignalBand = 'PRIMITIVE' | 'COGNITIVE';
+type DetectabilityClass = 'ux-visible' | 'ux-quiet' | 'transform-visible';
+
+interface ManifoldSignal {
+  id: string;
+  kind: SignalKind;
+  band: SignalBand;
+  detectability: DetectabilityClass;
+  sourceComponent: string;
+  subsystem?: string;
+  timestamp: number;
+  ttl?: number; // seconds until signal expires
+  payload: Record<string, any>;
+  message: string;
+  // CGG escalation fields
+  warrantMinted?: boolean;
+  triadDetected?: boolean;
+  cogPrCandidate?: boolean;
+}
+
+interface ManifoldState {
+  signals: ManifoldSignal[];
+  totalVolume: number;
+  warrantsMinted: number;
+  triadsDetected: number;
+  cogPrCandidates: number;
+  byKind: Record<SignalKind, number>;
+  byDetectability: Record<DetectabilityClass, number>;
+}
+
+// Maps old stream types → new signal manifold
+function classifySignal(oldType: string, data: any): Partial<ManifoldSignal> {
+  switch (oldType) {
+    case 'performance_update':
+      return {
+        kind: data.performance > 95 ? 'BEACON' : 'TENSION',
+        band: data.performance > 90 ? 'COGNITIVE' : 'PRIMITIVE',
+        detectability: 'ux-quiet',
+        subsystem: 'performance_engine',
+      };
+    case 'status_change':
+      return {
+        kind: 'TENSION',
+        band: 'PRIMITIVE',
+        detectability: data.status === 'idle' ? 'transform-visible' : 'ux-visible',
+        subsystem: 'status_monitor',
+      };
+    case 'cognitive_analysis':
+      return {
+        kind: 'LESSON',
+        band: 'COGNITIVE',
+        detectability: 'ux-quiet',
+        subsystem: 'cognitive_engine',
+        cogPrCandidate: true,
+      };
+    case 'token_update':
+      return {
+        kind: 'BEACON',
+        band: 'COGNITIVE',
+        detectability: 'transform-visible',
+        subsystem: 'context_budget',
+      };
+    default:
+      return {
+        kind: 'BEACON',
+        band: 'PRIMITIVE',
+        detectability: 'ux-quiet',
+      };
+  }
+}
+
+let signalCounter = 0;
+function genSignalId(): string {
+  signalCounter = (signalCounter + 1) % Number.MAX_SAFE_INTEGER;
+  return `sig_${Date.now()}_${signalCounter}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
 
 interface ComponentData {
   id: string;
@@ -46,6 +130,17 @@ const CognitiveArchitecture = () => {
   const [realTimeData, setRealTimeData] = useState<{[key: string]: any}>({});
   const [mcpStatus, setMcpStatus] = useState<'disconnected' | 'starting' | 'running'>('disconnected');
   const [streamingUpdates, setStreamingUpdates] = useState<string[]>([]);
+  // Signal Manifold State
+  const [manifold, setManifold] = useState<ManifoldState>({
+    signals: [],
+    totalVolume: 0,
+    warrantsMinted: 0,
+    triadsDetected: 0,
+    cogPrCandidates: 0,
+    byKind: { BEACON: 0, TENSION: 0, LESSON: 0 },
+    byDetectability: { 'ux-visible': 0, 'ux-quiet': 0, 'transform-visible': 0 },
+  });
+  const [auditPanelOpen, setAuditPanelOpen] = useState(false);
   const [showStatusMessages, setShowStatusMessages] = useState(true);
   const wsRef = useRef<WebSocket | null>(null);
   const mcpServerRef = useRef<any>(null);
@@ -173,6 +268,46 @@ const CognitiveArchitecture = () => {
     }
   }, []);
 
+  const emitManifoldSignal = useCallback((oldType: string, data: any) => {
+    const classified = classifySignal(oldType, data);
+    const signal: ManifoldSignal = {
+      id: genSignalId(),
+      kind: classified.kind || 'BEACON',
+      band: classified.band || 'PRIMITIVE',
+      detectability: classified.detectability || 'ux-quiet',
+      sourceComponent: data.componentId || 'unknown',
+      subsystem: classified.subsystem,
+      timestamp: Date.now(),
+      ttl: classified.kind === 'TENSION' ? 30 : 120,
+      payload: data.updates || {},
+      message: data.message || 'System update',
+      warrantMinted: classified.kind === 'TENSION' && (data.performance || 100) < 85,
+      triadDetected: Math.random() < 0.08, // ~8% chance per signal
+      cogPrCandidate: classified.cogPrCandidate || false,
+    };
+
+    setManifold(prev => {
+      const newSignals = [signal, ...prev.signals].slice(0, 50);
+      return {
+        signals: newSignals,
+        totalVolume: prev.totalVolume + 1,
+        warrantsMinted: prev.warrantsMinted + (signal.warrantMinted ? 1 : 0),
+        triadsDetected: prev.triadsDetected + (signal.triadDetected ? 1 : 0),
+        cogPrCandidates: prev.cogPrCandidates + (signal.cogPrCandidate ? 1 : 0),
+        byKind: {
+          ...prev.byKind,
+          [signal.kind]: (prev.byKind[signal.kind] || 0) + 1,
+        },
+        byDetectability: {
+          ...prev.byDetectability,
+          [signal.detectability]: (prev.byDetectability[signal.detectability] || 0) + 1,
+        },
+      };
+    });
+
+    return signal;
+  }, []);
+
   const handleRealTimeUpdate = useCallback((data: any) => {
     setRealTimeData(prev => ({
       ...prev,
@@ -191,11 +326,23 @@ const CognitiveArchitecture = () => {
       updateComponentStatus(data.componentId, data.status);
     }
 
-    setStreamingUpdates(prev => [
-      `${new Date().toLocaleTimeString()}: ${data.message || 'System update received'}`,
-      ...prev.slice(0, 9)
-    ]);
-  }, []);
+    // Emit to signal manifold
+    const signal = emitManifoldSignal(data.type, data);
+
+    // Only push to streaming updates if UX-visible
+    if (signal.detectability === 'ux-visible') {
+      setStreamingUpdates(prev => [
+        `${new Date().toLocaleTimeString()}: ${data.message || 'System update received'}`,
+        ...prev.slice(0, 9)
+      ]);
+    } else {
+      // Quiet rail — still log but less aggressively
+      setStreamingUpdates(prev => [
+        `${new Date().toLocaleTimeString()}: [${signal.kind}] ${data.message || 'Signal processed'}`,
+        ...prev.slice(0, 9)
+      ]);
+    }
+  }, [emitManifoldSignal]);
 
   const updateRealTimeData = useCallback((data: any) => {
     // Process Claude streaming response data
@@ -748,26 +895,34 @@ const CognitiveArchitecture = () => {
     }
   }), []);
 
-  // Simulate real-time data updates
+  // Simulate real-time data updates with diverse signal types
   useEffect(() => {
     if (!isConnected) return;
 
+    const signalTypes = ['performance_update', 'status_change', 'cognitive_analysis', 'token_update'];
+
     const interval = setInterval(() => {
-      // Simulate random component updates
       const components = Object.values(swarmSystem.rings).flatMap(ring => ring.components);
       const randomComponent = components[Math.floor(Math.random() * components.length)];
+      const randomType = signalTypes[Math.floor(Math.random() * signalTypes.length)];
       
-      const mockUpdate = {
+      const mockUpdate: any = {
         componentId: randomComponent.id,
-        type: 'performance_update',
-        performance: Math.floor(Math.random() * 20) + 80, // 80-100%
-        message: `${randomComponent.name} optimization cycle complete`,
+        type: randomType,
+        message: `${randomComponent.name} ${randomType.replace('_', ' ')} cycle`,
         updates: {
           efficiency: Math.floor(Math.random() * 10) + 90,
           throughput: Math.floor(Math.random() * 1000) + 500,
           errorRate: Math.random() * 0.1
         }
       };
+
+      if (randomType === 'performance_update') {
+        mockUpdate.performance = Math.floor(Math.random() * 20) + 80;
+      }
+      if (randomType === 'status_change') {
+        mockUpdate.status = ['active', 'optimizing', 'idle'][Math.floor(Math.random() * 3)];
+      }
 
       handleRealTimeUpdate(mockUpdate);
     }, 3000);
@@ -1321,6 +1476,151 @@ const CognitiveArchitecture = () => {
                 {update}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Signal Manifold Audit Panel Toggle */}
+      <button
+        onClick={() => setAuditPanelOpen(!auditPanelOpen)}
+        className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-full backdrop-blur-md border text-xs font-semibold transition-all duration-300 flex items-center gap-2 ${
+          auditPanelOpen 
+            ? 'bg-purple-500/30 border-purple-400/50 text-purple-100' 
+            : 'bg-black/40 border-white/20 text-gray-300 hover:bg-purple-500/20 hover:border-purple-400/30'
+        }`}
+      >
+        <Radio className="w-3 h-3" />
+        Signal Manifold {auditPanelOpen ? '▼' : '▲'}
+        {manifold.totalVolume > 0 && (
+          <span className="bg-purple-500/50 px-2 py-0.5 rounded-full text-[10px]">
+            {manifold.totalVolume}
+          </span>
+        )}
+      </button>
+
+      {/* Signal Manifold Audit Panel */}
+      {auditPanelOpen && (
+        <div className="fixed top-12 left-1/2 transform -translate-x-1/2 z-50 w-[95vw] max-w-2xl max-h-[70vh] overflow-hidden flex flex-col backdrop-blur-xl bg-black/90 border border-purple-500/30 rounded-2xl shadow-2xl">
+          {/* Manifold Header */}
+          <div className="p-4 border-b border-purple-500/20 flex-shrink-0">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-purple-300 flex items-center gap-2">
+                <Radio className="w-4 h-4" />
+                CGG v3 Signal Manifold
+              </h3>
+              <button onClick={() => setAuditPanelOpen(false)} className="text-gray-400 hover:text-white p-1">
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Manifold Stats */}
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-[10px]">
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-2 text-center">
+                <div className="text-green-400 font-bold text-sm">{manifold.byKind.BEACON}</div>
+                <div className="text-green-300/70">BEACON</div>
+              </div>
+              <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-2 text-center">
+                <div className="text-orange-400 font-bold text-sm">{manifold.byKind.TENSION}</div>
+                <div className="text-orange-300/70">TENSION</div>
+              </div>
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-2 text-center">
+                <div className="text-blue-400 font-bold text-sm">{manifold.byKind.LESSON}</div>
+                <div className="text-blue-300/70">LESSON</div>
+              </div>
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-2 text-center">
+                <div className="text-red-400 font-bold text-sm">{manifold.warrantsMinted}</div>
+                <div className="text-red-300/70">Warrants</div>
+              </div>
+              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-2 text-center">
+                <div className="text-yellow-400 font-bold text-sm">{manifold.triadsDetected}</div>
+                <div className="text-yellow-300/70">Triads</div>
+              </div>
+              <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-2 text-center">
+                <div className="text-cyan-400 font-bold text-sm">{manifold.cogPrCandidates}</div>
+                <div className="text-cyan-300/70">CogPR</div>
+              </div>
+            </div>
+
+            {/* Detectability Breakdown */}
+            <div className="flex gap-3 mt-3 text-[10px]">
+              <div className="flex items-center gap-1">
+                <Eye className="w-3 h-3 text-white" />
+                <span className="text-gray-300">UX-visible: {manifold.byDetectability['ux-visible']}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <EyeOff className="w-3 h-3 text-gray-500" />
+                <span className="text-gray-300">UX-quiet: {manifold.byDetectability['ux-quiet']}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-purple-400" />
+                <span className="text-gray-300">Transform: {manifold.byDetectability['transform-visible']}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Signal Stream */}
+          <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+            {manifold.signals.length === 0 ? (
+              <div className="text-center text-gray-500 text-xs py-8">
+                No signals emitted yet. Waiting for cognitive stream...
+              </div>
+            ) : (
+              manifold.signals.map((signal) => (
+                <div
+                  key={signal.id}
+                  className={`flex items-start gap-2 p-2 rounded-lg border text-[11px] transition-all ${
+                    signal.kind === 'TENSION'
+                      ? 'bg-orange-500/5 border-orange-500/20'
+                      : signal.kind === 'LESSON'
+                      ? 'bg-blue-500/5 border-blue-500/20'
+                      : 'bg-green-500/5 border-green-500/20'
+                  }`}
+                >
+                  {/* Signal Kind Badge */}
+                  <span className={`shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                    signal.kind === 'TENSION' ? 'bg-orange-500/20 text-orange-300' :
+                    signal.kind === 'LESSON' ? 'bg-blue-500/20 text-blue-300' :
+                    'bg-green-500/20 text-green-300'
+                  }`}>
+                    {signal.kind}
+                  </span>
+
+                  {/* Band */}
+                  <span className="shrink-0 text-[9px] text-gray-500 font-mono">
+                    {signal.band === 'COGNITIVE' ? '🧠' : '⚡'}
+                  </span>
+
+                  {/* Message */}
+                  <span className="text-gray-200 flex-1 truncate">{signal.message}</span>
+
+                  {/* Flags */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    {signal.warrantMinted && (
+                      <span className="text-red-400" title="Warrant minted">
+                        <AlertTriangle className="w-3 h-3" />
+                      </span>
+                    )}
+                    {signal.triadDetected && (
+                      <span className="text-yellow-400" title="Triad detected">△</span>
+                    )}
+                    {signal.cogPrCandidate && (
+                      <span className="text-cyan-400" title="CogPR candidate">
+                        <FileText className="w-3 h-3" />
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Detectability */}
+                  <span className={`shrink-0 text-[8px] px-1 py-0.5 rounded ${
+                    signal.detectability === 'ux-visible' ? 'bg-white/10 text-white' :
+                    signal.detectability === 'ux-quiet' ? 'bg-gray-500/10 text-gray-500' :
+                    'bg-purple-500/10 text-purple-400'
+                  }`}>
+                    {signal.detectability === 'ux-visible' ? '👁' : signal.detectability === 'ux-quiet' ? '🔇' : '📈'}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
